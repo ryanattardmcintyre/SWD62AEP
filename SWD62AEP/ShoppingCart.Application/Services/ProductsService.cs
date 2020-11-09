@@ -1,4 +1,5 @@
-﻿using ShoppingCart.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+using ShoppingCart.Application.Interfaces;
 using ShoppingCart.Application.ViewModels;
 using ShoppingCart.Domain.Interfaces;
 using System;
@@ -13,7 +14,7 @@ namespace ShoppingCart.Application.Services
         private IProductsRepository _productRepo;
         public ProductsService(IProductsRepository productRepo)
         {
-            _productRepo = productRepo;
+            _productRepo = productRepo; 
         }
 
         public IQueryable<ProductViewModel> GetProducts()
