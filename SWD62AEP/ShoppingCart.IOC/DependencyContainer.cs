@@ -15,7 +15,7 @@ namespace ShoppingCart.IOC
 {
     public class DependencyContainer
     {
-        public static void RegisterServices(IServiceCollection services )
+        public static void RegisterServices(IServiceCollection services, string connectionString )
         {
             //when are these instances triggered?
             //as soon as the application starts?
@@ -32,9 +32,9 @@ namespace ShoppingCart.IOC
                 Scoped: IoC container will create an instance of the specified service type once per request and will be shared in a single request.
              */
 
-
-           
-
+            services.AddDbContext<ShoppingCartDbContext>(options =>
+              options.UseSqlServer(connectionString
+                 ));
 
 
             services.AddScoped<IProductsRepository, ProductsRepository>();
