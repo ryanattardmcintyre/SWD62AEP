@@ -19,8 +19,9 @@ namespace ShoppingCart.Application.Interfaces
         //To understand the role of ViewModel(s) better, think of Views in a relational database
         IQueryable<ProductViewModel> GetProducts();
 
-       // void RateProduct(Guid id, string comment, double rating);
+        // void RateProduct(Guid id, string comment, double rating);
 
+        ProductViewModel GetProduct(Guid id);
         
     }
 }
