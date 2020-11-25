@@ -2,6 +2,7 @@
 using ShoppingCart.Application.Interfaces;
 using ShoppingCart.Application.ViewModels;
 using ShoppingCart.Domain.Interfaces;
+using ShoppingCart.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,6 @@ namespace ShoppingCart.Application.Services
             return list;
         }
 
-
         public ProductViewModel GetProduct(Guid id)
         {
             ProductViewModel myViewModel = new ProductViewModel();
@@ -45,13 +45,28 @@ namespace ShoppingCart.Application.Services
             myViewModel.Name = productFromDb.Name;
             myViewModel.Price = productFromDb.Price;
             myViewModel.Category = new CategoryViewModel();
-            myViewModel.Category.Id = productFromDb.Category.Id;
+            myViewModel.Category.Id = productFromDb.Category.Id; //NullReferenceException --> a property is still null!!
             myViewModel.Category.Name = productFromDb.Category.Name;
 
             return myViewModel;
 
         }
 
+        public void AddProduct(ProductViewModel data)
+        {
+            //AutoMapper (NuGet Package)
 
+            //ProductViewModel ====> Product
+
+            Product p = new Product();
+            p.Description = data.Description;
+            p.ImageUrl = data.ImageUrl;
+            p.Name = data.Name;
+            p.Price = data.Price;
+            p.CategoryId = data.Category.Id;
+
+            _productRepo.AddProduct(p);
+
+        }
     }
 }
