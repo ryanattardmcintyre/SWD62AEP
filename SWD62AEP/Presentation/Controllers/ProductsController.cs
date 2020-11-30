@@ -13,11 +13,13 @@ namespace Presentation.Controllers
     public class ProductsController : Controller
     {
         private IProductsService _productsService;
-        public ProductsController(IProductsService productsService)
+        private ICategoriesService _categoriesService;
+        public ProductsController(IProductsService productsService,
+            ICategoriesService categoriesService)
         {
             _productsService = productsService;
+            _categoriesService = categoriesService;
         }
-
 
         /// <summary>
         /// Products Catalogue
@@ -42,13 +44,17 @@ namespace Presentation.Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet] //the get method which will load the page with blank fields
         public IActionResult Create()
         {
-            return View();
+            var catList = _categoriesService.GetCategories();
+
+            ViewBag.Categories = catList;
+
+            return View(); //model => ProductViewModel
         }
 
-        [HttpPost]
+        [HttpPost] //the post method is called when the user clicks on the submit button
         public IActionResult Create(ProductViewModel data)
         {
             //validation
@@ -67,8 +73,20 @@ namespace Presentation.Controllers
                 ViewData["warning"] = "Product was not added. Check your details";
             }
             
+            var catList = _categoriesService.GetCategories();
+            ViewBag.Categories = catList;
+
             return View();
         }
+
+
+        public IActionResult Delete(Guid id)
+        {
+            _productsService.DeleteProduct(id);
+            TempData["feedback"] = "Product was deleted successfully"; //change wherever we are using ViewData to use TempData data
+            return RedirectToAction("Index");
+        }
+
 
     }
 }
