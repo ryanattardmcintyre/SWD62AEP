@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using ShoppingCart.Application.ViewModels;
 
 namespace Presentation.Controllers
 {
+  //  [Authorize(Roles ="Admin")]
     public class ProductsController : Controller
     {
         private IProductsService _productsService;
@@ -49,6 +51,8 @@ namespace Presentation.Controllers
         }
 
         [HttpGet] //the get method which will load the page with blank fields
+        [Authorize(Roles ="Admin")] //Authorize vs Authorize(Roles="Admin") 
+                                    //Authorize authorizes anyone who is logged in, Authorize(Roles="Admin")  authorizes only admins
         public IActionResult Create()
         {
             var catList = _categoriesService.GetCategories();
@@ -59,7 +63,8 @@ namespace Presentation.Controllers
         }
 
         [HttpPost] //the post method is called when the user clicks on the submit button
-        public IActionResult Create(ProductViewModel data, IFormFile file)
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create(ProductViewModel data, IFormFile file) //Postman, Burp, Zap, Fiddler
         {
             //validation
             try
