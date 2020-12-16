@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using ShoppingCart.Application.Interfaces;
 using ShoppingCart.Application.ViewModels;
 using ShoppingCart.Domain.Interfaces;
@@ -13,14 +15,22 @@ namespace ShoppingCart.Application.Services
     public class ProductsService : IProductsService
     {
         private IProductsRepository _productRepo;
-        public ProductsService(IProductsRepository productRepo)
+        private IMapper _mapper;
+        public ProductsService(IProductsRepository productRepo, IMapper mapper)
         {
-            _productRepo = productRepo; 
+            _productRepo = productRepo;
+            _mapper = mapper;
         }
 
         public IQueryable<ProductViewModel> GetProducts()
-        {   //converting from Product into ProductViewModel
-            var list = from p in _productRepo.GetProducts()
+        {
+            //Product >> ProductViewModel
+            //ProjectTo is a way how to map from one type to the other however ONLY when you have a Queryable datatype
+            return _productRepo.GetProducts().ProjectTo<ProductViewModel>(_mapper.ConfigurationProvider);
+
+
+            //converting from Product into ProductViewModel
+            /*var list = from p in _productRepo.GetProducts()
                        select new ProductViewModel()
                        {
                            Id = p.Id,
@@ -31,25 +41,33 @@ namespace ShoppingCart.Application.Services
                            Category = new CategoryViewModel() { Id = p.Category.Id, Name = p.Category.Name }
                        };
 
-            return list;
+            return list; */
         }
 
         public ProductViewModel GetProduct(Guid id)
         {
-            ProductViewModel myViewModel = new ProductViewModel();
-            var productFromDb = _productRepo.GetProduct(id);
+            //Product >> ProductViewModel
+            Product product = _productRepo.GetProduct(id);
+            var resultingProductViewModel = _mapper.Map<ProductViewModel>(product);
+            return resultingProductViewModel;
 
-            myViewModel.Description = productFromDb.Description;
-            myViewModel.Id = productFromDb.Id;
-            myViewModel.ImageUrl = productFromDb.ImageUrl;
-            myViewModel.Name = productFromDb.Name;
-            myViewModel.Price = productFromDb.Price;
-            myViewModel.Category = new CategoryViewModel();
-            myViewModel.Category.Id = productFromDb.Category.Id; //NullReferenceException --> a property is still null!!
-            myViewModel.Category.Name = productFromDb.Category.Name;
+            //return _mapper.Map<ProductViewModel>(_productRepo.GetProduct(id));
 
-            return myViewModel;
 
+            /* ProductViewModel myViewModel = new ProductViewModel();
+             var productFromDb = _productRepo.GetProduct(id);
+
+             myViewModel.Description = productFromDb.Description;
+             myViewModel.Id = productFromDb.Id;
+             myViewModel.ImageUrl = productFromDb.ImageUrl;
+             myViewModel.Name = productFromDb.Name;
+             myViewModel.Price = productFromDb.Price;
+             myViewModel.Category = new CategoryViewModel();
+             myViewModel.Category.Id = productFromDb.Category.Id; //NullReferenceException --> a property is still null!!
+             myViewModel.Category.Name = productFromDb.Category.Name;
+
+             return myViewModel;
+            */
         }
 
         public void AddProduct(ProductViewModel data)
@@ -58,7 +76,12 @@ namespace ShoppingCart.Application.Services
 
             //ProductViewModel ====> Product
 
-            Product p = new Product();
+            var p = _mapper.Map<Product>(data);
+            p.Category = null;
+            _productRepo.AddProduct(p);
+
+
+           /* Product p = new Product();
             p.Description = data.Description;
             p.ImageUrl = data.ImageUrl;
             p.Name = data.Name;
@@ -66,6 +89,8 @@ namespace ShoppingCart.Application.Services
             p.CategoryId = data.Category.Id;
 
             _productRepo.AddProduct(p);
+           */
+
 
         }
 

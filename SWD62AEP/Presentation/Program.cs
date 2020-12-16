@@ -13,6 +13,7 @@ namespace Presentation
     {
         public static void Main(string[] args)
         {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
             CreateHostBuilder(args).Build().Run();
         }
 

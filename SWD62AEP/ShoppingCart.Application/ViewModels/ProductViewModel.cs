@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace ShoppingCart.Application.ViewModels
@@ -12,8 +13,13 @@ namespace ShoppingCart.Application.ViewModels
     public class ProductViewModel
     {
         public Guid Id { get; set; }
+
+        [Required()]
+        [StringLength(50)]
         public string Name { get; set; }
     
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter valid integer Number")]
         public double Price { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }

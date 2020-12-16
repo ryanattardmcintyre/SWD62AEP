@@ -67,6 +67,14 @@ namespace Presentation.Controllers
         public IActionResult Create(ProductViewModel data, IFormFile file) //Postman, Burp, Zap, Fiddler
         {
             //validation
+
+            //if(data.Name == "")
+            //{
+            //    ViewData["Warning"] = "Name cannot be left empty";
+            //    return View();
+            //}
+
+
             try
             {
                 if(file != null)
