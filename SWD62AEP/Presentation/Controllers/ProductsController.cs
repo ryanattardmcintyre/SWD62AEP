@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Models;
 using ShoppingCart.Application.Interfaces;
 using ShoppingCart.Application.Services;
 using ShoppingCart.Application.ViewModels;
@@ -57,14 +58,18 @@ namespace Presentation.Controllers
         {
             var catList = _categoriesService.GetCategories();
 
-            ViewBag.Categories = catList;
+         //   ViewBag.Categories = catList;
 
-            return View(); //model => ProductViewModel
+            CreateProductModel model = new CreateProductModel();
+            model.Categories = catList.ToList();
+
+
+            return View(model); //model => ProductViewModel
         }
 
         [HttpPost] //the post method is called when the user clicks on the submit button
         [Authorize(Roles = "Admin")]
-        public IActionResult Create(ProductViewModel data, IFormFile file) //Postman, Burp, Zap, Fiddler
+        public IActionResult Create(CreateProductModel data, IFormFile file) //Postman, Burp, Zap, Fiddler
         {
             //validation
 
@@ -89,10 +94,10 @@ namespace Presentation.Controllers
                         {
                             file.CopyTo(stream);
                         }
-                        data.ImageUrl = @"\Images\" + newFilename; //relative Path
+                        data.Product.ImageUrl = @"\Images\" + newFilename; //relative Path
                     }
                 }
-                _productsService.AddProduct(data);
+                _productsService.AddProduct(data.Product);
                 ViewData["feedback"] = "Product was added successfully";
                 ModelState.Clear();
             }
@@ -100,11 +105,16 @@ namespace Presentation.Controllers
             {
                 //log errors
                 ViewData["warning"] = "Product was not added. Check your details";
-            }
-            var catList = _categoriesService.GetCategories();
-            ViewBag.Categories = catList;
 
-            return View();
+                //i want to redirect the user to a common page (when there is an error)
+                TempData["error"] = "this is a test error";
+                return RedirectToAction("Error", "Home");
+            }
+
+            CreateProductModel model = new CreateProductModel();
+            model.Categories = _categoriesService.GetCategories().ToList();
+
+            return View(model);
         }
 
 
