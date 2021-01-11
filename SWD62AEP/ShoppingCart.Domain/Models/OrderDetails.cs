@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace ShoppingCart.Domain.Models
@@ -11,12 +12,14 @@ namespace ShoppingCart.Domain.Models
 
 
         //foreign key attribute
+        [Required]
         public Guid ProductFk { get; set; }
         public virtual Product Product {get; set;}
 
 
 
         //foreign key attribute
+        [Required]
         public Guid OrderFk { get; set; }
         public virtual Order Order { get; set; }
 

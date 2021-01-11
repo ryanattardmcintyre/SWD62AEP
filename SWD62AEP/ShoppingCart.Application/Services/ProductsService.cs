@@ -22,6 +22,7 @@ namespace ShoppingCart.Application.Services
             _mapper = mapper;
         }
 
+
         public IQueryable<ProductViewModel> GetProducts()
         {
             //Product >> ProductViewModel
